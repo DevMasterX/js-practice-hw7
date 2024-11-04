@@ -1,37 +1,51 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
-console.log(galleryItems);
-
 const galleryListEl = document.querySelector(".gallery");
 
 galleryListEl.addEventListener("click", onGalleryClick);
 
-const markup = galleryItems
-  .map(({ preview, description, original }) => {
-    return `
-  <li class="gallery__item">
-      <img class="gallery__image"  src="${preview}" alt="${description}" data-origin='${original}'/>
-  </li> 
-        `;
-  })
-  .join("");
+const markup = createGalleryMarkup(galleryItems);
 
 galleryListEl.insertAdjacentHTML("beforeend", markup);
 
+function createGalleryMarkup(items) {
+  return items
+    .map(({ preview, description, original }) => {
+      return `
+<li class="gallery__item">
+  <a class="gallery__link" href="${original}">
+    <img
+      class="gallery__image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</li>
+        `;
+    })
+    .join("");
+}
+
 function onGalleryClick(e) {
-  console.log(e.target.dataset.origin);
+  e.preventDefault();
 
   if (!e.target.classList.contains("gallery__image")) {
-    console.log("chepuha");
     return;
   }
 
   const instance = basicLightbox.create(`
-     <div>
-      <img src="${e.target.dataset.origin}" alt="${e.target.alt}">
-    </div>
+      <img src="${e.target.dataset.source}" alt="${e.target.alt}" width="800" height="600">
 `);
 
   instance.show();
+  window.addEventListener("keydown", onEscapeKeyClick);
+
+  function onEscapeKeyClick(e) {
+    if (e.code === "Escape" && instance) {
+      instance.close();
+      window.removeEventListener("keydown", onEscapeKeyClick);
+    }
+  }
 }
