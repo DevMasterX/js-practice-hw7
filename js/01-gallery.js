@@ -29,7 +29,7 @@ function onGalleryClick(e) {
 
   const instance = basicLightbox.create(`
      <div>
-      <img src="${e.target.dataset.origin}" alt="">
+      <img src="${e.target.dataset.origin}" alt="${e.target.alt}">
     </div>
 `);
 
